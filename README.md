@@ -21,3 +21,8 @@ data, or on live market data via yfinance.
   whole reason for including it – Gaussian assumptions understate tail risk.
 - Ledoit-Wolf shrinkage is the default covariance estimator since the sample covariance
   is unstable on short windows with few assets.
+
+
+## Future Additions
+
+- The progress of this three stock risk engine, is to eventually add FICC instruments and Hierarchical Risk Parity (since mean-variance / max-Sharpe via SLSQP) gets worse as you add assets)
