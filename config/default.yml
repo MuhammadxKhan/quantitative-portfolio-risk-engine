@@ -1,0 +1,40 @@
+project:
+  output_dir: "outputs"
+  random_seed: 42
+  save_html: true
+  save_csv: true
+  auto_open_html: true        # opens the charts in your browser automatically
+
+data:
+  tickers: ["AAPL", "MSFT", "GOOGL"]
+  start_date: "2020-01-01"
+  end_date: "2025-01-01"
+  source: "sample"            # "sample" runs offline; "yfinance" pulls live prices
+  price_field: "Close"
+
+estimation:
+  trading_days: 252
+  mean_shrinkage: 0.35
+  covariance_estimator: "ledoit_wolf"   # ledoit_wolf, ewma or sample
+  ewma_decay: 0.94
+
+scenarios:
+  horizon_years: 1.0
+  n_steps: 126
+  n_scenarios: 1500
+  t_degrees_of_freedom: 6
+  confidence_level: 0.95
+
+optimisation:
+  risk_free_rate: 0.04
+  min_weight: 0.00
+  max_weight: 0.80
+  n_random_portfolios: 4000
+  frontier_points: 45
+
+backtest:
+  enabled: true
+  lookback_days: 126
+  rebalance_frequency_days: 21
+  strategy: "max_sharpe"       # max_sharpe or min_variance
+  transaction_cost_bps: 5
