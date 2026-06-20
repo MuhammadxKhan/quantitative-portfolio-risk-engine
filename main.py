@@ -1,11 +1,4 @@
-"""Run the portfolio risk engine.
 
-    pip install -r requirements.txt
-    python main.py
-
-Uses offline sample data by default (see config/default.yml) so it runs with
-no internet. Switch data.source to "yfinance" for live prices.
-"""
 from __future__ import annotations
 
 from pathlib import Path
