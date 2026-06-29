@@ -1,6 +1,8 @@
 """Loading config + price data.
 
-Pipeline orchestration, plotting, and output writing
+Parses the YAML config into a Config object and loads prices, either
+synthetic sample data (offline) or live data via yfinance.
+
 """
 from __future__ import annotations
 
