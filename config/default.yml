@@ -3,13 +3,13 @@ project:
   random_seed: 42
   save_html: true
   save_csv: true
-  auto_open_html: true        # opens the charts in your browser automatically
+  auto_open_html: false        # opens the charts in your browser automatically if true
 
 data:
   tickers: ["AAPL", "MSFT", "GOOGL"]
   start_date: "2020-01-01"
   end_date: "2025-01-01"
-  source: "sample"            # "sample" runs offline; "yfinance" pulls live prices
+  source: "yfinance"            # "sample" runs offline; "yfinance" pulls live prices
   price_field: "Close"
 
 estimation:
