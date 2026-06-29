@@ -13,8 +13,6 @@ from sklearn.covariance import LedoitWolf
 # ---- estimating mu and covariance ----------------------------------------
 
 def shrunk_mean(log_returns, trading_days=252, shrinkage=0.35):
-    # Shrink each asset's sample mean towards the cross-sectional average.
-    # Sample means are really noisy, so pulling them together helps a lot.
     if not 0 <= shrinkage <= 1:
         raise ValueError("shrinkage must be in [0, 1]")
     sample_mu = log_returns.mean().to_numpy() * trading_days
