@@ -1,7 +1,6 @@
 """Loading config + price data.
 
-I put config parsing and data loading in the same file because they're both
-just "get the inputs ready before any of the actual maths happens".
+I kept the plotting helpers in this file since they're only ever called from the pipeline anyway.
 """
 from __future__ import annotations
 
