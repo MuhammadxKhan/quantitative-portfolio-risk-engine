@@ -132,8 +132,7 @@ def _yfinance_prices(tickers, start, end, field):
 
 
 def _sample_prices(tickers, start, end, seed):
-    # Synthetic correlated prices so the repo runs offline with no API key.
-    # It's basically a correlated GBM - same idea as the scenario engine.
+   # synthetic correlated price series for offline runs
     rng = np.random.default_rng(seed)
     dates = pd.bdate_range(start=start, end=end)
     n_days, n_assets = len(dates), len(tickers)
