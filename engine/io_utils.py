@@ -1,6 +1,6 @@
 """Loading config + price data.
 
-I kept the plotting helpers in this file since they're only ever called from the pipeline anyway.
+Pipeline orchestration, plotting, and output writing
 """
 from __future__ import annotations
 
