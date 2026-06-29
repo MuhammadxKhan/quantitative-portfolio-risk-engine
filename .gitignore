@@ -9,3 +9,9 @@ venv/
 # generated outputs - keep the folder, not the files
 outputs/*
 !outputs/.gitkeep
+
+outputs/
+__pycache__/
+.pytest_cache/
+*.pyc
+
