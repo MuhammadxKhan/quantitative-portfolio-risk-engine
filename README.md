@@ -44,15 +44,6 @@ pip install -r requirements.txt
 python main.py
 ```
 
-The default config uses synthetic data, so the project runs offline. To use live market data, change this in `config/default.yml`:
-
-```yaml
-data:
-  source: "yfinance"
-```
-
-Outputs are written to the `outputs/` folder, which is ignored by Git.
-
 ## Project layout
 
 ```text
