@@ -45,7 +45,7 @@ def correlated_gbm(s0, mu, cov, horizon_years, n_steps, n_scenarios, rng):
 
 def multivariate_t(mu, cov, horizon_years, n_scenarios, dof, rng):
     # Fat-tailed version: a normal shock divided by a chi-square factor.
-    # Lower dof => fatter tails => bigger VaR/CVaR, which is the point.
+   # smaller degrees of freedom create heavier-tailed shocks
     n_assets = len(mu)
     z = rng.normal(size=(n_scenarios, n_assets))
     chi = rng.chisquare(dof, size=n_scenarios)
@@ -124,7 +124,7 @@ def _moments(scenario_returns):
 
 def random_cloud(scenario_returns, tickers, n_portfolios, settings, confidence, rng):
     # Random long-only weights via a Dirichlet, rejecting any that break bounds.
-    # This is the cloud of grey dots behind the frontier on the plot.
+    # random feasible portfolios for comparison with the solved frontier
     n = scenario_returns.shape[1]
     _check_bounds(n, settings.min_weight, settings.max_weight)
 
@@ -144,8 +144,7 @@ def random_cloud(scenario_returns, tickers, n_portfolios, settings, confidence, 
 
 
 def efficient_frontier(scenario_returns, settings, n_points, confidence):
-    # Sweep target returns from the min-var point up to the max-return point,
-    # minimising variance at each target. That traces out the frontier.
+    # solve minimum-variance portfolios across a grid of target returns
     mu, cov = _moments(scenario_returns)
     w_minvar = min_variance(mu, cov, settings)
     w_maxsharpe = max_sharpe(mu, cov, settings)
