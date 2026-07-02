@@ -59,8 +59,6 @@ tests/test_engine.py    core tests
 
 ## Current limitations
 
-This is a research/learning project, not a production portfolio system.
-
 The main limitations are:
 
 * the default universe is only three liquid equities
@@ -68,12 +66,8 @@ The main limitations are:
 * transaction costs are simplified
 * no liquidity, borrow, funding, or execution model is included
 * no explicit factor model is used
-* no DeFi-specific risks are modelled yet, such as smart contract risk, oracle risk, liquidation risk, pool depth, or APY regime changes
 * the optimiser is long-only with simple bounds
 
-## Next steps
-
-The extension I am most interested in is a DeFi yield-risk module. The idea would be to model lending/yield positions using APY history, utilisation, TVL/liquidity, drawdown behaviour, and protocol-specific risk flags, then compare allocations using CVaR and walk-forward performance rather than headline APY alone.
 
 ## Future additions
 
