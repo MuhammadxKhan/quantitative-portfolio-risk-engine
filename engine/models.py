@@ -53,7 +53,11 @@ def multivariate_t(mu, cov, horizon_years, n_scenarios, dof, rng):
     chi = rng.chisquare(dof, size=n_scenarios)
     scale = np.sqrt(dof / chi).reshape(-1, 1)
 
-    chol = np.linalg.cholesky(cov * horizon_years + 1e-12 * np.eye(n_assets))
+    # A t with `dof` d.o.f. has covariance Scatter * dof/(dof-2). We want the
+    # shocks to have covariance cov*horizon (matched to the GBM engine), so we
+    # feed cov*horizon*(dof-2)/dof into the Cholesky. Requires dof > 2.
+    scatter = cov * horizon_years * (dof - 2) / dof
+    chol = np.linalg.cholesky(scatter + 1e-12 * np.eye(n_assets))
     shocks = (z @ chol.T) * scale
     return ScenarioSet("fat_tailed_t", mu * horizon_years + shocks)
 
