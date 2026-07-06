@@ -25,15 +25,17 @@ class ScenarioSet:
 
 
 def correlated_gbm(s0, mu, cov, horizon_years, n_steps, n_scenarios, rng):
-    # Standard multi-asset GBM. Cholesky gives us correlated normal shocks,
-    # and the -0.5*var term is the Ito correction so the drift is right.
+ # Standard multi-asset GBM in log space. Cholesky gives correlated normal
+    # shocks. `mu` is already the mean of *log* returns (see shrunk_mean), i.e.
+    # the log-drift (mu_arith - 0.5*sigma^2), so we must NOT subtract 0.5*sigma^2
+    # again here -- doing so double-counts the Ito term and biases returns low.
     n_assets = len(s0)
     dt = horizon_years / n_steps
     chol = np.linalg.cholesky(cov + 1e-12 * np.eye(n_assets))
 
     paths = np.zeros((n_scenarios, n_steps + 1, n_assets))
     paths[:, 0, :] = s0
-    drift = (mu - 0.5 * np.diag(cov)) * dt
+    drift = mu * dt
 
     for t in range(1, n_steps + 1):
         z = rng.normal(size=(n_scenarios, n_assets)) @ chol.T
