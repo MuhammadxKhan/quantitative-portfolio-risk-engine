@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-from engine.analytics import covariance, estimate_inputs, portfolio_metrics
+from engine.analytics import covariance, estimate_inputs, portfolio_metrics, var_backtest
 from engine.backtest import run_backtest
 from engine.io_utils import Config, load_prices
 from engine.models import (
