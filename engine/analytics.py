@@ -119,3 +119,70 @@ def summarise(daily, rf, trading_days, confidence):
         "daily_var": var,
         "daily_cvar": cvar,
     }
+
+
+
+
+
+# ---- out-of-sample VaR backtest ------------------------------------------
+
+def kupiec_pof(n_obs, n_breaches, expected_rate):
+    """Kupiec proportion-of-failures (POF) likelihood-ratio test.
+
+    H0: the true breach probability equals `expected_rate` (= 1 - confidence).
+    Returns (LR statistic, p-value) against a chi-square with 1 d.o.f.
+    A high p-value means the VaR model's breach rate is statistically
+    consistent with its nominal level (well-calibrated).
+    """
+    from scipy import stats
+
+    N, x, p = int(n_obs), int(n_breaches), float(expected_rate)
+    if N == 0:
+        return float("nan"), float("nan")
+    pi = x / N
+    ll_null = (N - x) * np.log(1 - p) + x * np.log(p)
+    if x == 0:
+        ll_alt = N * np.log(1 - pi + 1e-12)
+    elif x == N:
+        ll_alt = N * np.log(pi + 1e-12)
+    else:
+        ll_alt = (N - x) * np.log(1 - pi) + x * np.log(pi)
+    lr = -2.0 * (ll_null - ll_alt)
+    pval = float(1 - stats.chi2.cdf(lr, df=1))
+    return float(lr), pval
+
+
+def var_backtest(portfolio_returns, window, confidence=0.95):
+    """One-step-ahead historical-simulation VaR backtest (out-of-sample).
+
+    At each date, the VaR forecast uses ONLY the trailing `window` returns
+    (data strictly before the tested day); the realised next-day return is
+    then checked against it. This is genuinely out-of-sample: no future
+    information enters the forecast. Returns the breach counts and the
+    Kupiec POF calibration test.
+    """
+    r = np.asarray(portfolio_returns, dtype=float)
+    n = len(r)
+    if n <= window + 1:
+        raise ValueError("not enough data for this VaR backtest window")
+
+    tail_prob = 1.0 - confidence
+    breaches = np.empty(n - window, dtype=bool)
+    for t in range(window, n):
+        past = r[t - window:t]                      # strictly pre-t data
+        var = -np.quantile(past, tail_prob)         # positive loss threshold
+        breaches[t - window] = r[t] < -var          # realised loss beyond VaR
+
+    n_obs = int(breaches.size)
+    n_breach = int(breaches.sum())
+    lr, pval = kupiec_pof(n_obs, n_breach, tail_prob)
+    return {
+        "confidence": confidence,
+        "window": window,
+        "observations": n_obs,
+        "breaches": n_breach,
+        "expected_rate": tail_prob,
+        "realised_rate": n_breach / n_obs if n_obs else float("nan"),
+        "kupiec_lr": lr,
+        "kupiec_p": pval,
+    }
