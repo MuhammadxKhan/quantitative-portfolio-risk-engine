@@ -168,4 +168,18 @@ def run_pipeline(cfg: Config) -> dict[str, Path]:
             _save(plot_equity(bt.returns), p, cfg.auto_open_html)
             written["walk_forward_equity"] = p
 
+    # Out-of-sample VaR backtest on the equal-weight portfolio. This is
+    # independent of the scenario engines (no circularity): the VaR forecast
+    # at each date uses only trailing data, then is scored on the next day.
+    ew_returns = data.simple_returns.mean(axis=1).to_numpy()
+    vb = var_backtest(ew_returns, cfg.lookback_days, cfg.confidence_level)
+    print(f"\nOut-of-sample VaR backtest (equal-weight, {cfg.confidence_level:.0%} "
+          f"historical, {cfg.lookback_days}-day window):")
+    print(f"  breaches {vb['breaches']}/{vb['observations']} = {vb['realised_rate']:.2%} "
+          f"(expected {vb['expected_rate']:.2%})  |  Kupiec p = {vb['kupiec_p']:.3f}")
+    if cfg.save_csv:
+        p = out / "var_backtest.csv"
+        pd.DataFrame([vb]).to_csv(p, index=False)
+        written["var_backtest"] = p
+
     return written
