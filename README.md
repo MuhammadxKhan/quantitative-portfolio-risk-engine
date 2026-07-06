@@ -33,9 +33,26 @@ I built this to understand how portfolio risk estimates change when moving from 
 
 The main question I wanted to test was:
 
-> How sensitive are portfolio risk and allocation results to the scenario model and covariance estimator used?
+> How sensitive are portfolio **risk** estimates to the scenario model and covariance estimator used?
 
 The Gaussian model is useful as a baseline, but it can understate tail risk. The fat-tailed and bootstrap models make the tail-risk assumptions more visible.
+
+### What the scenario engines are (and are not) for
+
+The GBM and multivariate-t engines are **risk-sensitivity tools, not performance
+claims**. Their scenarios are drawn from moments (mu, cov) estimated on the same
+history, so any *return / Sharpe / frontier* computed from them is circular by
+construction — it recovers the inputs plus Monte-Carlo noise. The legitimate
+output is the **comparison of VaR/CVaR for a fixed portfolio across distributional
+assumptions** (normal vs fat-tailed vs empirical bootstrap), which is a genuine
+"what if tails are heavier" question and needs no out-of-sample data.
+
+The only genuinely **out-of-sample** results are:
+
+* the **walk-forward backtest** (weights estimated on trailing data, applied forward), and
+* the **VaR backtest** (`analytics.var_backtest`): a one-step-ahead historical VaR
+  forecast scored on the *next* day's realised return, with a **Kupiec POF**
+  calibration test. A correct 95% VaR should be breached ~5% of the time.
 
 ## Running
 
@@ -61,8 +78,13 @@ tests/test_engine.py    core tests
 
 The main limitations are:
 
-* the default universe is only three liquid equities
-* expected returns are noisy and heavily assumption-driven
+* the default universe is only three large, highly liquid US equities
+  (AAPL, MSFT, GOOGL) — so covariance shrinkage (Ledoit-Wolf) is close to
+  decorative here and only starts to earn its place as the universe grows
+* GBM/t scenario *returns* are circular by construction (see above) — treat
+  them as a risk-sensitivity layer, not a performance result
+* expected returns are noisy and heavily assumption-driven, which is why the
+  default allocation is min-variance rather than max-Sharpe
 * transaction costs are simplified
 * no liquidity, borrow, funding, or execution model is included
 * no explicit factor model is used
