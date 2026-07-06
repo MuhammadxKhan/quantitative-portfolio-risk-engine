@@ -6,8 +6,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from engine.analytics import portfolio_metrics, covariance, shrunk_mean
-from engine.models import Settings, min_variance, max_sharpe, efficient_frontier
+from engine.analytics import (
+    portfolio_metrics, covariance, shrunk_mean, var_backtest, kupiec_pof,
+)from engine.models import Settings, min_variance, max_sharpe, efficient_frontier
 
 
 @pytest.fixture
@@ -64,3 +65,21 @@ def test_frontier_returns_increase(returns, settings):
     # sorted by volatility, so returns should be broadly non-decreasing
     assert len(df) > 1
     assert df["expected_return"].iloc[-1] >= df["expected_return"].iloc[0]
+
+
+def test_kupiec_zero_lr_when_calibrated():
+    # observed breach rate exactly equal to expected => LR statistic ~ 0
+    lr, p = kupiec_pof(n_obs=1000, n_breaches=50, expected_rate=0.05)
+    assert abs(lr) < 1e-6
+    assert p > 0.99
+
+
+def test_var_backtest_is_well_calibrated_on_iid_normal():
+    # A well-behaved iid series should breach a 95% VaR ~5% of the time,
+    # so the Kupiec test should NOT reject calibration.
+    rng = np.random.default_rng(1)
+    r = rng.normal(0.0004, 0.01, size=4000)
+    res = var_backtest(r, window=250, confidence=0.95)
+    assert 0.03 < res["realised_rate"] < 0.07
+    assert res["kupiec_p"] > 0.05          # not rejected
+    assert res["observations"] == 4000 - 250
