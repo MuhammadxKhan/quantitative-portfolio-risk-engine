@@ -63,9 +63,9 @@ tests/test_engine.py    core tests
 The main limitations are:
 
 * the default universe is only three large, highly liquid US equities
-  (AAPL, MSFT, GOOGL) — so covariance shrinkage (Ledoit-Wolf) is close to
+  (AAPL, MSFT, GOOGL); so covariance shrinkage (Ledoit-Wolf) is close to
   decorative here and only starts to earn its place as the universe grows
-* GBM/t scenario *returns* are circular by construction (see above) — treat
+* GBM/t scenario *returns* are circular by construction (see above); treat
   them as a risk-sensitivity layer, not a performance result
 * expected returns are noisy and heavily assumption-driven, which is why the
   default allocation is min-variance rather than max-Sharpe
