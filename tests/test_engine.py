@@ -7,8 +7,13 @@ import pandas as pd
 import pytest
 
 from engine.analytics import (
-    portfolio_metrics, covariance, shrunk_mean, var_backtest, kupiec_pof,
-)from engine.models import Settings, min_variance, max_sharpe, efficient_frontier
+    portfolio_metrics,
+    covariance,
+    shrunk_mean,
+    var_backtest,
+    kupiec_pof,
+)
+from engine.models import Settings, min_variance, max_sharpe, efficient_frontier
 
 
 @pytest.fixture
