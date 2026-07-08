@@ -37,22 +37,6 @@ The main question I wanted to test was:
 
 The Gaussian model is useful as a baseline, but it can understate tail risk. The fat-tailed and bootstrap models make the tail-risk assumptions more visible.
 
-### What the scenario engines are (and are not) for
-
-The GBM and multivariate-t engines are **risk-sensitivity tools, not performance
-claims**. Their scenarios are drawn from moments (mu, cov) estimated on the same
-history, so any *return / Sharpe / frontier* computed from them is circular by
-construction — it recovers the inputs plus Monte-Carlo noise. The legitimate
-output is the **comparison of VaR/CVaR for a fixed portfolio across distributional
-assumptions** (normal vs fat-tailed vs empirical bootstrap), which is a genuine
-"what if tails are heavier" question and needs no out-of-sample data.
-
-The only genuinely **out-of-sample** results are:
-
-* the **walk-forward backtest** (weights estimated on trailing data, applied forward), and
-* the **VaR backtest** (`analytics.var_backtest`): a one-step-ahead historical VaR
-  forecast scored on the *next* day's realised return, with a **Kupiec POF**
-  calibration test. A correct 95% VaR should be breached ~5% of the time.
 
 ## Running
 
