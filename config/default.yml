@@ -36,5 +36,5 @@ backtest:
   enabled: true
   lookback_days: 126
   rebalance_frequency_days: 21
-   strategy: "min_variance"    # min_variance avoids optimising on noisy mu (error-maximisation); max_sharpe available
+  strategy: "min_variance"    # min_variance avoids optimising on noisy mu (error-maximisation); max_sharpe available
   transaction_cost_bps: 5
